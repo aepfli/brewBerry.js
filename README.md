@@ -1,4 +1,3 @@
-brewBerry
-=========
+# BrewBerry
 
-node.js and raspberry pi support for brewing beer
+a [Sails](http://sailsjs.org) application
