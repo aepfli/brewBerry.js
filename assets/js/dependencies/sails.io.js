@@ -1322,6 +1322,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
     if (!io) throw new Error('`sails.io.js` requires a socket.io client, but `io` was not passed in.');
 
 
+
     //////////////////////////////////////////////////////////////
     /////                              ///////////////////////////
     ///// PRIVATE METHODS/CONSTRUCTORS ///////////////////////////
@@ -1392,6 +1393,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
     }
 
 
+
     /**
      * A little logger for this library to use internally.
      * Basically just a wrapper around `console.log` with
@@ -1441,6 +1443,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
     });
 
 
+
     /**
      * _isConnected
      *
@@ -1453,6 +1456,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
     function _isConnected(socket) {
       return socket.socket && socket.socket.connected;
     }
+
 
 
     /**
@@ -1483,6 +1487,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
         }
       }
     }
+
 
 
     /**
@@ -1520,6 +1525,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
       xmlhttp.send();
       return xmlhttp;
     }
+
 
 
     /**
@@ -1604,6 +1610,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
     var Socket = io.SocketNamespace;
 
 
+
     /**
      * Simulate a GET request to sails
      * e.g.
@@ -1629,6 +1636,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
         url: url
       }, cb);
     };
+
 
 
     /**
@@ -1658,6 +1666,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
     };
 
 
+
     /**
      * Simulate a PUT request to sails
      * e.g.
@@ -1685,6 +1694,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
     };
 
 
+
     /**
      * Simulate a DELETE request to sails
      * e.g.
@@ -1710,6 +1720,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
         url: url
       }, cb);
     };
+
 
 
     /**
@@ -1744,6 +1755,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
         url: url
       }, cb);
     };
+
 
 
     /**
@@ -1797,6 +1809,7 @@ var io = "undefined" == typeof module ? {} : module.exports;
       // Send the request.
       _emitFrom(this, request);
     };
+
 
 
     // Set a `sails` object that may be used for configuration before the

@@ -1,0 +1,9 @@
+<h1>Add / Edit BrewEventType</h1>
+<form name="new_BrewEventType_form">
+  <div ng-repeat="(attr_name, attr_value) in model_def">
+    <label for="{{attr_name}}">{{attr_name}}</label>
+    <input type="text" ng-model="BrewEventType[attr_name]" name="{{attr_name}}"/>
+  </div>
+  <button ng-click="save(BrewEventType)">Save BrewEventType</button>
+  <button ui-sref="Breweventtypes.list">Cancel</button>
+</form>

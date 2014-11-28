@@ -20,7 +20,7 @@ module.exports = {
       type: 'date'
     },
     recipe: {
-      model: 'Recipe',
+      model: 'BrewRecipe',
       defaultsTo: 'null'
     },
     events: {

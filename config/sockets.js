@@ -99,7 +99,7 @@ module.exports.sockets = {
 
 
   /***************************************************************************
-   *                                                                          *
+  *                                                                          *
    * `authorization`                                                          *
    *                                                                          *
    * Global authorization for Socket.IO access, this is called when the       *
