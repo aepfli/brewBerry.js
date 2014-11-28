@@ -1,7 +1,7 @@
 /**
  * Recipe.js
  *
- * @description :: TODO: You might write a short summary of how this model works and what it represents here.
+ * @description :: Representing recipes to brew a beer, this is a genereal information how it should be.
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 

@@ -1,7 +1,7 @@
 /**
  * BrewEvent.js
  *
- * @description :: TODO: You might write a short summary of how this model works and what it represents here.
+ * @description :: An Event occuring during the brew process: basically it can be a timebased, temperaturebased, or just a info for adding ingridients
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
