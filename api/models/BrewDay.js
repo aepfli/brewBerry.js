@@ -1,7 +1,7 @@
 /**
  * BrewDay.js
  *
- * @description :: TODO: You might write a short summary of how this model works and what it represents here.
+ * @description :: Representing an actual day when you brew
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
@@ -20,7 +20,7 @@ module.exports = {
       type: 'date'
     },
     recipe: {
-      model: 'Recipe',
+      model: 'BrewRecipe',
       defaultsTo: 'null'
     },
     events: {

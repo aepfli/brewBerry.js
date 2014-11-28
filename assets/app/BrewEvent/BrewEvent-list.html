@@ -1,0 +1,12 @@
+<h1>Brewevents</h1>
+<ul>
+  <li ng-repeat="BrewEvent in Brewevents">
+    <div>
+      <p ng-repeat="(key, val) in model_def">{{key}} : {{BrewEvent[key]}}</p>
+    </div>
+    <a href="" ui-sref="Brewevents.edit({ id: BrewEvent.id })">Edit</a>
+    <a href="" ng-click="remove(BrewEvent)">Delete</a>
+  </li>
+</ul>
+<div ng-show="Brewevents.length === 0">Looks like you haven't added any Brewevents yet?</div>
+<a ng-hide="adding" ui-sref="Brewevents.add">Add A New BrewEvent</a>

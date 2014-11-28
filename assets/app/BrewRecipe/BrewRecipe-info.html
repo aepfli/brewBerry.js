@@ -1,0 +1,23 @@
+<h1>{{BrewRecipe.name}}</h1>
+<p>{{BrewRecipe.yeast}}</p>
+<p>{{BrewRecipe.hops}}</p>
+
+<ul>
+  <li ng-repeat="BrewEvent in BrewRecipe.instructions">
+    <div>
+      <p ng-repeat="(key, val) in model_def">{{key}} : {{BrewEvent[key]}}</p>
+    </div>
+    <a href="" ui-sref="BrewEvent.edit({ id: BrewEvent.id })">Edit</a>
+    <a href="" ng-click="BrewEvent.remove(BrewEvent)">Delete</a>
+  </li>
+</ul>
+<a ng-hide="adding" ui-sref="Brewrecipes.addEvent({ id: BrewRecipe.id })">Add A New Event</a>
+
+<h1>Add BrewEvent</h1>
+<form name="new_BrewEvent_form">
+  <div ng-repeat="(attr_name, attr_value) in BrewEventDefinition">
+    <label for="{{attr_name}}">{{attr_name}}</label>
+    <input type="text" ng-model="BrewEvent[attr_name]" name="{{attr_name}}"/>
+  </div>
+  <button ng-click="addEvent(BrewRecipe, BrewEvent)">Save BrewEvent</button>
+</form>

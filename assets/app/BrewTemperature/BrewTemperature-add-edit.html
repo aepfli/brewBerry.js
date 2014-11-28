@@ -1,0 +1,9 @@
+<h1>Add / Edit BrewTemperature</h1>
+<form name="new_BrewTemperature_form">
+  <div ng-repeat="(attr_name, attr_value) in model_def">
+    <label for="{{attr_name}}">{{attr_name}}</label>
+    <input type="text" ng-model="BrewTemperature[attr_name]" name="{{attr_name}}"/>
+  </div>
+  <button ng-click="save(BrewTemperature)">Save BrewTemperature</button>
+  <button ui-sref="Brewtemperatures.list">Cancel</button>
+</form>
