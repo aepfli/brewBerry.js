@@ -9,7 +9,7 @@
   function BrewRecipeCtrl($scope, $state, Brewrecipes, BrewRecipeDefinition, SailsResourceService) {
     var resourceService = new SailsResourceService('Brewrecipes'.toLowerCase());
 
-    $scope.Brewrecipes = Brewrecipes;
+    $scope.Brewrecipes = Brewrecipes + " -event";
     $scope.model_def = BrewRecipeDefinition.originalElement;
     $scope.BrewRecipe = {};
 
@@ -31,7 +31,7 @@
     };
   }
 
-  function SingleBrewRecipeCtrl($scope, $stateParams, Brewrecipes, BrewRecipeDefinition, BrewEventDefinition) {
+  function SingleBrewRecipeCtrl($scope, $state, $stateParams, Brewrecipes, BrewRecipeDefinition, Brewevents, BrewEventDefinition, Breweventtypes, SailsResourceService) {
     // coerce string -> int
     $stateParams.id = _.parseInt($stateParams.id);
     if (!_.isNaN($stateParams.id)) {
@@ -39,14 +39,63 @@
         id: $stateParams.id
       });
     }
-    $scope.BrewEvent = {};
+    var brewEventsresourceService = new SailsResourceService('Brewevents'.toLowerCase());
+    $scope.BrewEvent = {recipe: $scope.BrewRecipe.id};
+    $scope.QuickBarBrewEvent = {recipe: $scope.BrewRecipe.id};
+    $scope.BrewEvents = Brewevents;
+    $scope.BrewRecipes = Brewrecipes;
+    $scope.BrewEventTypes = Breweventtypes;
     $scope.BrewEventDefinition = BrewEventDefinition.originalElement;
 
-    $scope.addEvent = function (BrewRecipe, BrewEvent) {
-      console.log("--> Submitting form");
+    $scope.removeEvent = function removeEvent(BrewEvent) {
+      if (BrewEvent.id) {
+        BrewEvent.id = _.parseInt(BrewEvent.id);
+        BrewEvent = _.find(Brewevents, {
+          id: BrewEvent.id
+        });
+        brewEventsresourceService.remove(BrewEvent, $scope.Brewevents)
+          .then(function () {
+            $state.reload();
+          }, function (err) {
+            console.error('An error occured: ' + err);
+          });
+      }
+    };
+
+    $scope.addQuickEvent = function addQuickEvent(BrewEvent, EventType) {
+      BrewEvent.name = EventType.name;
+      BrewEvent.eventType = EventType.id;
+      $scope.addEvent(BrewEvent);
+    };
+
+    $scope.addEvent = function addEvent(BrewEvent) {
       console.log(BrewEvent);
-      console.log(BrewRecipe.name);
-      BrewEventDefinition.create(BrewEvent);
+      if (BrewEvent.id) {
+        BrewEvent.id = _.parseInt(BrewEvent.id);
+        var BrewEventExists = _.find(Brewevents, {
+          id: BrewEvent.id
+        });
+        BrewEventExists.name = BrewEvent.name;
+        BrewEventExists.eventType = BrewEvent.eventType;
+        BrewEvent = BrewEventExists;
+      } else {
+
+        BrewEvent = BrewEvent || $scope.BrewEvent;
+      }
+
+      if (!BrewEvent.start) {
+        BrewEvent.start = new Date();
+      }
+      brewEventsresourceService.save(BrewEvent, $scope.BrewEvents)
+        .then(function () {
+          $state.reload();
+        }, function (err) {
+          console.error('An error occured: ' + err);
+        });
+
+
+      console.log(event);
+
     }
   }
 

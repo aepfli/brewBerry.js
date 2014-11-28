@@ -20,6 +20,9 @@
             },
             Brewdays: function BrewdaysListResolve(Restangular) {
               return Restangular.all('Brewdays').getList();
+            },
+            Brewrecipes: function BrewdaysListResolve(Restangular) {
+              return Restangular.all('Brewrecipes').getList();
             }
           },
         })

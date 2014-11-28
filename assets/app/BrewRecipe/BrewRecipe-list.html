@@ -1,12 +1,26 @@
 <h1>Brewrecipes</h1>
+<hr/>
 <ul>
   <li ng-repeat="BrewRecipe in Brewrecipes">
-    <div>
-      <p ng-repeat="(key, val) in model_def">{{key}} : {{BrewRecipe[key]}}</p>
-    </div>
-    <a href="" ui-sref="Brewrecipes.edit({ id: BrewRecipe.id })">Edit</a>
-    <a href="" ng-click="remove(BrewRecipe)">Delete</a>
+    <a href="" ui-sref="Brewrecipes.info({ id: BrewRecipe.id })"
+       alt="yeast: {{BrewRecipe.yeast}} - hops: {{BrewRecipe.hops}}" class="BrewRecipe">{{BrewRecipe.name}}</a>
+    <a href="" ng-click="remove(BrewRecipe)" class="delete">Delete</a>
   </li>
 </ul>
 <div ng-show="Brewrecipes.length === 0">Looks like you haven't added any Brewrecipes yet?</div>
-<a ng-hide="adding" ui-sref="Brewrecipes.add">Add A New BrewRecipe</a>
+<br/>
+<hr/>
+<a ng-hide="adding" ng-click="adding= !adding" class="create">Add</a>
+
+<div ng-show="adding">
+  <h2>Add / Edit BrewRecipe</h2>
+
+  <form name="new_BrewRecipe_form">
+    <div ng-repeat="(attr_name, attr_value) in model_def">
+      <label for="{{attr_name}}">{{attr_name}}</label>
+      <input type="text" ng-model="BrewRecipe[attr_name]" name="{{attr_name}}"/>
+    </div>
+    <button ng-click="save(BrewRecipe)">Save BrewRecipe</button>
+    <button ui-sref="Brewrecipes.list">Cancel</button>
+  </form>
+</div>

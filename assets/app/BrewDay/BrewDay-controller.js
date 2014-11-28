@@ -6,10 +6,11 @@
     .controller('BrewDayCtrl', BrewDayCtrl)
     .controller('SingleBrewDayCtrl', SingleBrewDayCtrl);
 
-  function BrewDayCtrl($scope, $state, Brewdays, BrewDayDefinition, SailsResourceService) {
+  function BrewDayCtrl($scope, $state, Brewdays, BrewDayDefinition, Brewrecipes, SailsResourceService) {
     var resourceService = new SailsResourceService('Brewdays'.toLowerCase());
 
     $scope.Brewdays = Brewdays;
+    $scope.BrewRecipes = Brewrecipes;
     $scope.model_def = BrewDayDefinition.originalElement;
     $scope.BrewDay = {};
 

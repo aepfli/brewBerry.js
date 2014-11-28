@@ -18,12 +18,14 @@ module.exports = {
     end: {
       type: 'datetime'
     },
+    recipe: {
+      model: 'BrewRecipe'
+    },
     eventType: {
-      type: "string",
-      enums: ['HEAT', 'ADD', 'REST', 'PURIFY']
+      model: "BrewEventType"
     },
     temps: {
-      set: 'BrewTemperature'
+      collection: 'BrewTemperature'
     }
   }
 };

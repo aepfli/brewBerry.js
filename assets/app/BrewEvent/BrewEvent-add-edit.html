@@ -1,9 +1,18 @@
-<h1>Add / Edit BrewEvent</h1>
+
 <form name="new_BrewEvent_form">
-  <div ng-repeat="(attr_name, attr_value) in model_def">
-    <label for="{{attr_name}}">{{attr_name}}</label>
-    <input type="text" ng-model="BrewEvent[attr_name]" name="{{attr_name}}"/>
-  </div>
+  <label for="name">Name</label>
+  <input type="text" ng-model="BrewEvent.name" name="name" id="name"/>
+
+  <label for="start">Start</label>
+  <input type="date" ng-model="BrewEvent.start" name="start" id="start"/>
+
+  <label for="eventType">eventType</label>
+  <select ng-model="BrewEvent.eventType" name="eventType" id="eventType"
+          ng-options="BrewEventType.name for BrewEventType in BrewEventTypes">
+
+  </select>
+
+  <input type="hidden" ng-model="BrewEvent.recipe" name="recipe" value="{{BrewRecipe.id}}"/>
+  <button ng-click="addEvent(BrewRecipe, BrewEvent)">Save BrewEvent</button>
   <button ng-click="save(BrewEvent)">Save BrewEvent</button>
-  <button ui-sref="Brewevents.list">Cancel</button>
 </form>

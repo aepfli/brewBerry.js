@@ -15,6 +15,7 @@
 
     $scope.remove = function remove(BrewEvent) {
       BrewEvent = BrewEvent || $scope.BrewEvent;
+      console.log("i get Called");
       if (window.confirm('Are you sure you want to delete this BrewEvent?')) {
         return resourceService.remove(BrewEvent, $scope.Brewevents);
       }
@@ -24,7 +25,7 @@
       BrewEvent = BrewEvent || $scope.BrewEvent;
       return resourceService.save(BrewEvent, $scope.Brewevents)
         .then(function () {
-          $state.go('^.list');
+          $state.reload();
         }, function (err) {
           console.error('An error occured: ' + err);
         });

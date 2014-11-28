@@ -23,6 +23,12 @@
             },
             Brewrecipes: function BrewrecipesListResolve(Restangular) {
               return Restangular.all('Brewrecipes').getList();
+            },
+            Brewevents: function BreweventsListResolve(Restangular) {
+              return Restangular.all('Brewevents').getList();
+            },
+            Breweventtypes: function BreweventsListResolve(Restangular) {
+              return Restangular.all('Breweventtypes').getList();
             }
           }
         })

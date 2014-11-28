@@ -21,7 +21,8 @@ module.exports = {
       defaultsTo: 'yeast'
     },
     instructions: {
-      set: "BrewEvent"
+      collection: "BrewEvent",
+      via: 'recipe'
     }
   }
 };
