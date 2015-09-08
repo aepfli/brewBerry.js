@@ -1,4 +1,4 @@
-# BrewBerryAngular
+# brewBerry
 
 a [Sails](http://sailsjs.org) application, which should support you during your brew process, it will be basically developed for the Raspberry pi
 

@@ -4,7 +4,10 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="BrewBerry node_modules" level="project" />
-    <orderEntry type="library" name="Node.js v0.10.32 Core Modules" level="application" />
+    <orderEntry type="library" name="brewBerry node_modules" level="project" />
+  </component>
+  <component name="sonarModuleSettings">
+    <option name="localAnalysisScripName" value="&lt;PROJECT&gt;" />
+    <option name="serverName" value="&lt;PROJECT&gt;" />
   </component>
 </module>
