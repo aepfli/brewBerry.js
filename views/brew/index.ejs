@@ -1,0 +1,30 @@
+<section id="brewmenu">
+    <h2>Brewmenu</h2>
+    <ul>
+        <li>new Brew</li>
+        <li>load Brew</li>
+    </ul>
+</section>
+
+<section id="brewcontrol">
+    <h2>BrewControl</h2>
+    <ul>
+        <% for(var i = 0; i < enums.length; i++) { %>
+        <li>
+            <span style="background: <%= enums[i].color %>">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <a href="../events/add?type=<%= enums[i].id %>"><%= enums[i].name %></a>
+        </li>
+        <% } %>
+    </ul>
+</section>
+
+<section id="graph">
+    <div id="chart" style="width: 100%; height: 400px"></div>
+
+</section>
+
+<section id="temps">
+
+    <h2>Sensors</h2>
+
+</section>

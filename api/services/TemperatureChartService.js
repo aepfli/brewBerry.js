@@ -24,7 +24,7 @@ var TemperatureChartService = {
         limit: 20
       }, function (err, t) {
         console.log(t)
-        callback(ReturnService.createResult(t, err));
+        callback(ReturnService.createResult({temps:t,sensor:s}, err));
       })
     })
   }

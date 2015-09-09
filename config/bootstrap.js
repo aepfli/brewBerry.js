@@ -10,8 +10,15 @@
  */
 
 module.exports.bootstrap = function (cb) {
-  TemperatureLoggingService.getAllSensors();
+  //TODO: do something like TemperatureLoggingService.getAllSensors();
   // It's very important to trigger this callback method when you are finished
   // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
+
+  var eventtypes = ['heating', 'cooling', 'resting', 'purifying', 'cooking'];
+  var eventtypecolors = ['#FF7777', '#7777FF', '#777777', '#77ff77', '#FF0000'];
+  for( var i = 0; i < eventtypes.length; i++) {
+    BrewPhaseTypes.findOrCreate({name:eventtypes[i]}, {color: eventtypecolors[i], name:eventtypes[i]}, function(err, eventtype){ });
+  }
+
   cb();
 };

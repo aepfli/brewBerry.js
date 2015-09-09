@@ -1,4 +1,4 @@
-var chart; // global chart variable
+/*var chart; // global chart variable
 
 function getData() {
     var start_date = null;
@@ -49,4 +49,4 @@ $(document).ready(function () {
             data: []
         }]
     });
-});
+});*/
