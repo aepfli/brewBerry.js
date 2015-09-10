@@ -4,8 +4,11 @@
     float: left;
 }
 
-#brewmenu {
-    display: none;
+#brewmenu li {
+
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
 }
 
 #brewcontrol li {

@@ -1,19 +1,25 @@
 /**
-* Events.js
-*
-* @description :: TODO: You might write a short summary of how this model works and what it represents here.
-* @docs        :: http://sailsjs.org/#!documentation/models
-*/
+ * Events.js
+ *
+ * @description :: TODO: You might write a short summary of how this model works and what it represents here.
+ * @docs        :: http://sailsjs.org/#!documentation/models
+ */
 
 module.exports = {
 
-  attributes: {
-    eventDate: {
-      type: "datetime"
-    },
-    state: {
-      model: 'BrewPhaseTypes'
+    attributes: {
+        start: {
+            type: "datetime"
+        },
+        end: {
+            type: "datetime"
+        },
+        type: {
+            model: 'BrewPhaseTypes'
+        },
+        day: {
+            model: "Brews"
+        }
     }
-  }
 };
 

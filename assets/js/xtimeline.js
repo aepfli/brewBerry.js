@@ -72,7 +72,10 @@ var gaugeOptions = {
 
 var chart2;
 var sensors;
-function onChartLoad() {
+function onBrewDayLoaded() {
+
+    console.log("jippi")
+    loadBrewPhases();
     //TODO: load sensors
     //TODO: load brewphase
     //TODO: prep stuff :D
@@ -95,6 +98,27 @@ function loadSensors() {
             console.log(options)
             sensors[i].series = chart2.addSeries(options)
             loadSensor(sensors[i])
+        }
+    });
+}
+
+function loadBrewPhases() {
+    console.log("jippi2222")
+    $.getJSON("../brewphases/list?day="+dataContainer.brewday.id, function (data) {
+       var phases = data.data;
+        for (var i = 0; i < phases.length; i++) {
+            var to =Date.UTC(2018, 0, 4);
+            if(phases[i].end){
+                to = new Date(phases[i].end).getTime();
+            }
+            var options = {
+                from: new Date(phases[i].start).getTime(),
+                to: Date.UTC(2018, 0, 4),
+                color: phases[i].type.color,
+                id: phases[i].id
+            };
+            console.log(options)
+            dataContainer.plotbands.push(chart2.xAxis[0].addPlotBand(options));
         }
     });
 }
@@ -123,7 +147,7 @@ function loadSensor(sensor) {
 }
 
 function loadTemp(sensor) {
-    $.getJSON('./sensors/getTemps?sensor=' + sensor.name, function (data) {
+    $.getJSON('./sensors/getTemps?sensor=' + sensor.name+'&day='+dataContainer.brewday.id, function (data) {
         if (data.data.temps.length > 0) {
             if(data.data.sensor.running) {
                 sensor.temp = data.data.temps[0].temp;
@@ -143,18 +167,12 @@ function loadTemp(sensor) {
     });
 }
 
-function loadBrewPhases() {
-    $.getJSON();
-}
 $(document).ready(function () {
 
     chart2 = new Highcharts.Chart({
         chart: {
             renderTo: 'chart',
             defaultSeriesType: 'spline',
-            events: {
-                load: onChartLoad
-            }
         },
         title: {
             text: 'Raspberry Pi Temperature Plot'

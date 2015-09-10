@@ -43,7 +43,6 @@ var TemperatureService = {
                     }
 
                     if (s.running) {
-                        console.log("logging");
                         if (sails.config.environment === 'development') {
                             var f = 1;
                             var value = Math.random() * 5;
@@ -59,7 +58,6 @@ var TemperatureService = {
                             })
                         }
                     } else {
-                        console.log("clearing log");
                         clearInterval(inter);
                         clearInterval(this);
                     }

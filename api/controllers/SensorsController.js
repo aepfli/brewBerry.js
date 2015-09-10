@@ -20,7 +20,20 @@ module.exports = {
     TemperatureLoggingService.toggleLog(req.param("sensor"), function (r) {
       return res.json(r)
     });
-
+  },  allstartLogging: function (req, res) {
+    TemperatureLoggingService.start(function (r) {
+      return res.json(r)
+    });
+  },
+  allstopLogging: function (req, res) {
+    TemperatureLoggingService.stop( function (r) {
+      return res.json(r)
+    });
+  },
+  alltoggleLogging: function (req, res) {
+    TemperatureLoggingService.toggleLog(function (r) {
+      return res.json(r)
+    });
   },
   all: function (req, res) {
     TemperatureLoggingService.getAllSensors( function (r) {
