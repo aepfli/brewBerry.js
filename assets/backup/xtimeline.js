@@ -80,35 +80,46 @@ function onBrewDayLoaded() {
     //TODO: load brewphase
     //TODO: prep stuff :D
     //setInterval if needed!!!
-    loadSensors();
 }
 
 function loadSensors() {
-    $.getJSON("../sensors/all", function (data) {
-        sensors = data.data;
-        for (var i = 0; i < sensors.length; i++) {
+    $.getJSON("../sensors/find", function (data) {
+        sensors = {};
+        for (var i = 0; i < data.length; i++) {
+            var key = data[i].id;
+            sensors[key] = data[i];
+
             var options = {
-                name: sensors[i].name,
-                id: sensors[i].name,
-                type: 'area',
+                name: sensors[key].name,
+                id: sensors[key].name,
+                type: 'line',
                 tooltip: {
                     valueSuffix: " C"
-                }
+                },
+                lineWidth: 1
             };
             console.log(options)
-            sensors[i].series = chart2.addSeries(options)
-            loadSensor(sensors[i])
+            sensors[key].series = chart2.addSeries(options)
+            loadSensor(sensors[key])
         }
+
+        io.socket.on('temps', function (obj) {
+            if (obj.verb == 'created') {
+                var data = obj.data;
+                addTemp(data);
+            }
+        });
+
     });
 }
 
 function loadBrewPhases() {
     console.log("jippi2222")
-    $.getJSON("../brewphases/list?day="+dataContainer.brewday.id, function (data) {
-       var phases = data.data;
+    $.getJSON("../brewphases/list?day=" + dataContainer.brewday.id, function (data) {
+        var phases = data;
         for (var i = 0; i < phases.length; i++) {
-            var to =Date.UTC(2018, 0, 4);
-            if(phases[i].end){
+            var to = Date.UTC(2018, 0, 4);
+            if (phases[i].end) {
                 to = new Date(phases[i].end).getTime();
             }
             var options = {
@@ -138,37 +149,42 @@ function loadSensor(sensor) {
                 '<span style="font-size:12px;color:silver">Celsius</span></div>'
             },
             tooltip: {
-                valueSuffix: ' km/h'
+                valueSuffix: ' C'
             }
         }]
     }));
+
+    $("#temps"+sensor.name).bind('click', function (e) {
+        console.log("clickedi");
+        $.getJSON("../sensors/toggleLogging", {sensor: sensor.name}, function (data) {
+            console.log(data);
+        });
+    });
     sensor.lastUpdate = null;
-    setInterval(loadTemp, 2000, sensor);
 }
 
+function addTemp(temp) {
+    var sensor = sensors[temp.sensor];
+    sensor.temp = temp.temp;
+    if (dataContainer.brewday) {
+        var time = new Date(temp.brewTime);
+        var shift = sensor.series.data.length > 100;
+
+        sensor.series.addPoint({x: time.getTime(), y: sensor.temp}, true, shift);
+    }
+    sensor.gauge.series[0].points[0].update(sensor.temp);
+
+}
 function loadTemp(sensor) {
-    $.getJSON('./sensors/getTemps?sensor=' + sensor.name+'&day='+dataContainer.brewday.id, function (data) {
-        if (data.data.temps.length > 0) {
-            if(data.data.sensor.running) {
-                sensor.temp = data.data.temps[0].temp;
-            }else {
-                sensor.temp = null;
-            }
-            sensor.lastUpdate = new Date();
 
-            var time = new Date(data.data.temps[0].brewTime);
-            var shift = sensor.series.data.length > 100;
-
-            sensor.series.addPoint({x: time.getTime(), y: sensor.temp}, true, shift);
-            sensor.gauge.series[0].points[0].update(sensor.temp);
-
-        }
-
+    io.socket.get("/temps", {sensor: sensor.id, brewTime: {">": new Date(dataContainer.brewday.brewStart)}}, function (resData) {
+        console.log(resData);
     });
 }
 
 $(document).ready(function () {
 
+    loadSensors();
     chart2 = new Highcharts.Chart({
         chart: {
             renderTo: 'chart',

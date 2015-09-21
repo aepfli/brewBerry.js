@@ -15,7 +15,7 @@ var TemperatureService = {
                 console.log("sensor ids");
                 console.log(ids);
                 Sensors.findByName(ids, function (err, sensors) {
-                    callback(ReturnService.createResult(ids, err));
+                    callback(ReturnService.createResult(sensors, err));
                 })
             });
         }
@@ -25,23 +25,21 @@ var TemperatureService = {
         var sense = require('ds18b20');
         var options = opt || {};
 
-        var interval = 5000;
+        var interval = 1000;
         if (interval === 'undefinded') {
-            interval = 5000;
+            interval = 1000;
         }
-
-        Sensors.update({name: sensor}, {running: true}, function (err, s2) {
-            var oldV = 0;
-            if (err != null) {
-                return
+        Sensors.findOrCreate({name: sensor}, function (err, s) {
+            if (s.running) {
+                return callback(ReturnService.createResult(s, err));
             }
-            var inter = setInterval(function () {
-                Sensors.findOrCreate({name: sensor}, function (err, s) {
-                    if (err) {
-                        console.log(err);
-                        return
-                    }
-
+            s.running = true;
+            s.save(function(err, s2) {
+                var oldV = 0;
+                if (err != null) {
+                    return callback(ReturnService.createResult(s2, err));
+                }
+                setInterval(function () {
                     if (s.running) {
                         if (sails.config.environment === 'development') {
                             var f = 1;
@@ -58,25 +56,25 @@ var TemperatureService = {
                             })
                         }
                     } else {
-                        clearInterval(inter);
                         clearInterval(this);
                     }
-                });
-            }, interval);
 
-            return callback(ReturnService.createResult(s2, err));
+                }, interval);
+
+                return callback(ReturnService.createResult(s, err));
+            });
         });
-
     },
 
     stop: function (sensor, callback, options) {
         Sensors.update({name: sensor}, {running: false}, function (err, s) {
             console.log("stopped", s);
+            return callback(ReturnService.createResult(s, err))
         })
     },
 
     toggleLog: function (sensor, callback, options) {
-        Sensors.findOrCreate({name: sensor}, {name: sensor, running: false}, function (err, s) {
+        Sensors.find({name: sensor}, function (err, s) {
             if (err) {
                 console.log(err);
             }
@@ -89,10 +87,12 @@ var TemperatureService = {
     },
 
     createTemp: function (temp, sensor) {
-        Temps.create({temp: temp, brewTime: new Date(), sensor: sensor.id}, function (err, temp) {
+        Temps.create({temp: temp, brewTime: new Date(), sensor: sensor.id}).populateAll().exec(function (err, temp) {
             if (err) {
                 console.log(err);
             }
+            Temps.publishCreate(temp);
+            console.log(temp.brewTime + " " + temp.sensor);
         });
     }
 };
