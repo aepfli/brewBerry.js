@@ -11,6 +11,9 @@ module.exports = {
     name: {
       type: 'string'
     },
+    sysName: {
+      type: 'string'
+    },
     usage: {
       type: "string"
     },

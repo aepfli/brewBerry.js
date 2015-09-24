@@ -1,89 +1,50 @@
 /**
  * Created by sschrottner on 30.11.2014.
  */
+
+var sense = require('ds18b20');
+var oldV = {};
+
 var TemperatureService = {
 
     getAllSensors: function (callback, options) {
-        var result = {success: true, error: {}, data: []};
-        var sense = require('ds18b20');
         if (sails.config.environment === 'development') {
-            Sensors.find(function (err, sensors) {
-                callback(ReturnService.createResult(sensors, null));
-            })
+            return Sensors.find();
         } else {
-            sense.sensors(function (err, ids) {
-                console.log("sensor ids");
-                console.log(ids);
-                Sensors.findByName(ids, function (err, sensors) {
-                    callback(ReturnService.createResult(sensors, err));
-                })
-            });
+            return sense.sensors()
+                    .then(function (err, ids) {
+                        console.log("sensor ids");
+                        console.log(ids);
+                        return Sensors.findBySysname(ids)
+                    });
         }
     },
 
-    start: function (sensor, callback, opt) {
-        var sense = require('ds18b20');
-        var options = opt || {};
-
-        var interval = 1000;
-        if (interval === 'undefinded') {
-            interval = 1000;
-        }
-        Sensors.findOrCreate({name: sensor}, function (err, s) {
-            if (s.running) {
-                return callback(ReturnService.createResult(s, err));
-            }
-            s.running = true;
-            s.save(function(err, s2) {
-                var oldV = 0;
-                if (err != null) {
-                    return callback(ReturnService.createResult(s2, err));
-                }
-                setInterval(function () {
-                    if (s.running) {
-                        if (sails.config.environment === 'development') {
-                            var f = 1;
-                            var value = Math.random() * 5;
-                            if (Math.random() > 0.5) {
-                                f = -1;
+    intervall: function () {
+        setInterval(function () {
+            Sensors.find({running: true})
+                    .then(function (sensors) {
+                        for (var s in sensors) {
+                            if (sails.config.environment === 'development') {
+                                if (oldV[sensors[s].id] === undefined) {
+                                    oldV[sensors[s].id] = 50;
+                                }
+                                var f = 1;
+                                var value = Math.random() * 5;
+                                if (Math.random() > 0.5) {
+                                    f = -1;
+                                }
+                                value = oldV[sensors[s].id] + (value * f);
+                                oldV[sensors[s].id] = value;
+                                TemperatureService.createTemp(value, sensors[s])
+                            } else {
+                                sense.temperature(sensors[s].name, function (err, value) {
+                                    TemperatureService.createTemp(value, sensors[s])
+                                })
                             }
-                            value = oldV + (value * f);
-                            oldV = value;
-                            TemperatureService.createTemp(value, s)
-                        } else {
-                            sense.temperature(s.name, function (err, value) {
-                                TemperatureService.createTemp(value, s)
-                            })
                         }
-                    } else {
-                        clearInterval(this);
-                    }
-
-                }, interval);
-
-                return callback(ReturnService.createResult(s, err));
-            });
-        });
-    },
-
-    stop: function (sensor, callback, options) {
-        Sensors.update({name: sensor}, {running: false}, function (err, s) {
-            console.log("stopped", s);
-            return callback(ReturnService.createResult(s, err))
-        })
-    },
-
-    toggleLog: function (sensor, callback, options) {
-        Sensors.find({name: sensor}, function (err, s) {
-            if (err) {
-                console.log(err);
-            }
-            if (s.running) {
-                TemperatureService.stop(sensor, callback, options);
-            } else {
-                TemperatureService.start(sensor, callback, options);
-            }
-        });
+                    });
+        }, sails.config.brewberry.interval);
     },
 
     createTemp: function (temp, sensor) {

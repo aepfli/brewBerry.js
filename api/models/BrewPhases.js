@@ -9,15 +9,18 @@ module.exports = {
 
     attributes: {
         start: {
+            defaultsTo: new Date(),
             type: "datetime"
         },
         end: {
             type: "datetime"
         },
         type: {
+            required: true,
             model: 'BrewPhaseTypes'
         },
         day: {
+            required: true,
             model: "Brews"
         }
     }

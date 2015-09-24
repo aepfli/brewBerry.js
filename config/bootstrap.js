@@ -17,8 +17,11 @@ module.exports.bootstrap = function (cb) {
   var eventtypes = ['heating', 'cooling', 'resting', 'purifying', 'cooking'];
   var eventtypecolors = ['#FF7777', '#7777FF', '#777777', '#77ff77', '#FF0000'];
   for( var i = 0; i < eventtypes.length; i++) {
-    BrewPhaseTypes.findOrCreate({name:eventtypes[i]}, {color: eventtypecolors[i], name:eventtypes[i]}, function(err, eventtype){ });
+    BrewPhaseTypes.findOrCreate({name:eventtypes[i]}, {color: eventtypecolors[i], name:eventtypes[i]}, function(err, eventtype){
+    console.log(err)
+    });
   }
+  TemperatureLoggingService.intervall();
 
   cb();
 };

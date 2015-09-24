@@ -15,6 +15,7 @@ module.exports = {
       type: "datetime"
     },
     sensor: {
+      required: true,
       model: "Sensors"
     }
   }

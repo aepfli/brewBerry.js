@@ -11,14 +11,19 @@ module.exports = {
      * `EventsController.add()`
      */
     add: function (req, res) {
-        BrewPhaseService.createBrewPhase(req.param("day"), req.param("type"), function (r) {
-            return res.json(r);
-        })
+        BrewPhases.create({start: new Date(), day: req.param('day'), type: req.param('type')})
+                .then(function (phase) {
+                    return BrewPhases.findOneById(phase.id).populate('type')
+                })
+                .then(function (brewphase) {
+                    BrewPhases.publishCreate(brewphase);
+                    res.json(brewphase)
+                })
     },
     list: function (req, res) {
         console.log(req.allParams())
-        BrewPhases.find({day:req.param('day')}).populateAll().exec(function(err, phases){
-            res.json(ReturnService.createResult(phases,err));
+        BrewPhases.find({day: req.param('day')}).populateAll().exec(function (err, phases) {
+            res.json(ReturnService.createResult(phases, err));
         });
     }
 };

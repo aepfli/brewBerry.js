@@ -6,47 +6,53 @@
  */
 
 module.exports = {
-  startLogging: function (req, res) {
-    TemperatureLoggingService.start(req.param("sensor"), function (r) {
-      return res.json(r)
-    });
-  },
-  stopLogging: function (req, res) {
-    TemperatureLoggingService.stop(req.param("sensor") , function (r) {
-      return res.json(r)
-    });
-  },
-  toggleLogging: function (req, res) {
-    TemperatureLoggingService.toggleLog(req.param("sensor"), function (r) {
-      return res.json(r)
-    });
-  },  allstartLogging: function (req, res) {
-    TemperatureLoggingService.start(function (r) {
-      return res.json(r)
-    });
-  },
-  allstopLogging: function (req, res) {
-    TemperatureLoggingService.stop( function (r) {
-      return res.json(r)
-    });
-  },
-  alltoggleLogging: function (req, res) {
-    TemperatureLoggingService.toggleLog(function (r) {
-      return res.json(r)
-    });
-  },
-  all: function (req, res) {
-    TemperatureLoggingService.getAllSensors( function (r) {
-      return res.json(r)
-    });
-  },
-  getTemps: function (req, res) {
-    TemperatureChartService.getTemps(req.param("sensor"), req.allParams(), function (r) {
-      return res.json(r)
-    });
-  },
-  plot: function(req, res) {
-    return res.view("plotTemps.ejs", {sensor: 'test'})
-  }
+    startLogging: function (req, res) {
+        if (req.param('id') !== undefined) {
+            Sensors.update({id: req.param('id')}, {running: true})
+                    .then(function (sensor) {
+                        res.json(sensor)
+                    })
+        } else {
+            Sensors.find()
+                    .then(function (sensors) {
+                        var ids = [];
+                        for (var sensor in sensors) {
+                            ids.push(sensors[sensor].id)
+                        }
+                        console.log(sensors, ids)
+                        return Sensors.update(ids, {running: true})
+                    })
+                    .then(function(sensors){
+                        return res.json(sensors)
+                    })
+        }
+    },
+    stopLogging: function (req, res) {
+        if (req.param('id') !== undefined) {
+            Sensors.update({id: req.param('id')}, {running: false})
+                    .then(function (sensor) {
+                        res.json(sensor)
+                    })
+        }
+        else {
+            Sensors.find()
+                    .then(function (sensors) {
+                        var ids = [];
+                        for (var sensor in sensors) {
+                            ids.push(sensors[sensor].id)
+                        }
+                        console.log(sensors, ids)
+                        return Sensors.update(ids, {running: false})
+                    })
+                    .then(function(sensors){
+                        return res.json(sensors)
+                    })
+        }
+    },
+    all: function (req, res) {
+        TemperatureLoggingService.getAllSensors(function (r) {
+            return res.json(r)
+        });
+    }
 };
 

@@ -2,32 +2,8 @@
 
     <ul>
         <li><b>Brewmenu</b></li>
-        <li><a href="../brews/add" data-container="brewday">new Brew</a></li>
+        <li><a href="/brews/create" data-container="brewday">new Brew</a></li>
         <li>load Brew</li>
     </ul>
     <div id="timer"></div>
-</section>
-
-<section id="brewcontrol">
-    <h2>BrewControl</h2>
-    <ul>
-        <% for(var i = 0; i < enums.length; i++) { %>
-        <li>
-            <span style="background: <%= enums[i].color %>">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <a href="../brewphases/add?type=<%= enums[i].id %>" ><%= enums[i].name %></a>
-        </li>
-        <% } %>
-    </ul>
-
-</section>
-
-<section id="graph">
-    <div id="chart" style="width: 100%; height: 300px"></div>
-
-</section>
-
-<section id="temps">
-
-    <h2>Sensors</h2>
-
 </section>
