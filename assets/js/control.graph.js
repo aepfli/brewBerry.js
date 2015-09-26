@@ -19,8 +19,6 @@ brewBerry.controls.graph = (function () {
         },
         xAxis: {
             type: 'datetime',
-            tickPixelInterval: 150,
-            maxZoom: 500,
             title: {
                 text: 'Time',
                 margin: 15
@@ -69,10 +67,11 @@ brewBerry.controls.graph = (function () {
     }
 
     function onTempAdded(data) {
+
         var key = data.sensor;
 
         var time = new Date(data.brewTime);
-        var shift = brewBerry.services.temps.sensors[key].series.data.length > 100;
+        var shift = brewBerry.services.temps.sensors[key].series.data.length > 1000;
 
         brewBerry.services.temps.sensors[key].series.addPoint({x: time.getTime(), y: data.temp}, true, shift);
     }
