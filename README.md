@@ -1,6 +1,7 @@
 # brewBerry.js
+Raspberry Pi based Home brew automation using Node.js and sails.js with features like little brew log book for homebrewers. 
 
-A little brew log book for homebrewers. It logs temperatures of n ds18b20 sensors, allows to define brewphases (heating, cooling, purification, etc) and displays them in a nice Highchart.
+It logs temperatures of n ds18b20 sensors, allows to define brewphases (heating, cooling, purification, etc) and displays them in a nice Highchart. In the future it should be able to control a propane tank and the ignition of it, to control the temperature.
 
 ## Hardware
 - Raspberry pi
