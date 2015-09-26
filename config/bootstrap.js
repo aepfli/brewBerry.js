@@ -30,9 +30,9 @@ module.exports.bootstrap = function (cb) {
                     for (var i in ids) {
                         var ele = {}
                         ele.name = ids[i]
-                        ele.sysname = ids[i]
+                        ele.sysName = ids[i]
                         var se = {}
-                        se.sysname = ids[i]
+                        se.sysName = ids[i]
                         val.push(ele)
                         search.push(ele)
                     }

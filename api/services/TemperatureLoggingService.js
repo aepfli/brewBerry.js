@@ -38,7 +38,7 @@ var TemperatureService = {
                                 oldV[sensors[s].id] = value;
                                 TemperatureService.createTemp(value, sensors[s])
                             } else {
-                                sense.temperature(sensors[s].name, function (err, value) {
+                                sense.temperature(sensors[s].sysName, function (err, value) {
                                     TemperatureService.createTemp(value, sensors[s])
                                 })
                             }
