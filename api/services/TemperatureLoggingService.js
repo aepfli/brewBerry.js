@@ -25,7 +25,7 @@ var TemperatureService = {
             Sensors.find({running: true})
                     .then(function (sensors) {
                         for (var s in sensors) {
-                            if (sails.config.environment === 'development') {
+                            if ( false && sails.config.environment === 'development') {
                                 if (oldV[sensors[s].id] === undefined) {
                                     oldV[sensors[s].id] = 50;
                                 }
@@ -53,7 +53,7 @@ var TemperatureService = {
                 console.log(err);
             }
             Temps.publishCreate(temp);
-            console.log(temp.brewTime + " " + temp.sensor);
+            //console.log(temp.brewTime + " " + temp.sensor);
         });
     }
 };

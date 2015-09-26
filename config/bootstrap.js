@@ -9,6 +9,7 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.bootstrap.html
  */
 var sense = require('ds18b20');
+var Promise = require('bluebird');
 module.exports.bootstrap = function (cb) {
     //TODO: do something like TemperatureLoggingService.getAllSensors();
 
@@ -19,19 +20,23 @@ module.exports.bootstrap = function (cb) {
             console.log(err)
         });
     }
-    var sensors = Promise.promisify(sense.sensors());
+    var sensors = Promise.promisify(sense.sensors);
     TemperatureLoggingService.intervall();
     Sensors.update({}, {connected: false})
             .then(function (bla) {
                 return sensors().then(function (ids) {
                     var val = [];
+                    var search = [];
                     for (var i in ids) {
                         var ele = {}
                         ele.name = ids[i]
                         ele.sysname = ids[i]
+                        var se = {}
+                        se.sysname = ids[i]
                         val.push(ele)
+                        search.push(ele)
                     }
-                    return Sensors.findOrCreate(ids, val);
+                    return Sensors.findOrCreate(search, val);
                 })
             });
 
