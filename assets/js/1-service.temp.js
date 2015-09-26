@@ -11,16 +11,14 @@ brewBerry.services.temps = (function () {
         'onAdded': onAdded,
         "onTempAdded": listenOnTempAdded,
         'sensors': sensors,
-        'load': load
+        'load': load,
+        'reset': reset
     };
 
     function init() {
-    }
-
-    function load() {
         io.socket.on('sensors', onIOEvent);
+
         io.socket.get("/sensors", function (data) {
-            this.sensors = {};
             console.log(data);
             if (data !== undefined) {
                 for (var i = 0; i < data.length; i++) {
@@ -28,6 +26,12 @@ brewBerry.services.temps = (function () {
                 }
             }
         });
+    }
+    function reset() {
+
+    }
+
+    function load() {
     }
 
     function onAdded(name, action, recursive) {

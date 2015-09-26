@@ -8,16 +8,20 @@ brewBerry.services.phase = (function () {
     var onPhaseAdded = {};
     var publicMethods = {
         'onAdded': onAdded,
-        'load': load
+        'load': load,
+        'reset': reset
     };
 
     function init() {
+        io.socket.on('brewphases', onIOEvent);
+    }
+    function reset() {
     }
 
     function load() {
+        phases = {};
         //Subscribe to events
-        io.socket.on('brewphases', onIOEvent);
-        io.socket.get("/brewphases", function (data) { });
+        io.socket.get("/brewphases", {day: brewBerry.brewDay.id},function (data) { });
     }
 
     function onAdded(name, action, recursive) {
@@ -37,7 +41,6 @@ brewBerry.services.phase = (function () {
     }
 
     function onIOEvent(obj) {
-        console.log("what")
         if (obj.verb == 'created') {
             var data = obj.data;
             add(data);

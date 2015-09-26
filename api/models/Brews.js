@@ -9,13 +9,15 @@ module.exports = {
 
   attributes: {
     brewStart: {
-      type: "datetime"
+      type: "datetime",
+      defaultsTo: new Date()
     },
     brewEnd: {
       type: "datetime"
     },
     name: {
-      type: "string"
+      type: "string",
+      defaultsTo: "gamsbräu"
     },
     malt: {
       type: "string"
