@@ -20,6 +20,10 @@ module.exports = {
     running: {type: 'boolean',
       defaultsTo: false,
       required: true
+    },
+    connected: {type: 'boolean',
+      defaultsTo: false,
+      required: true
     }
   }
 };
