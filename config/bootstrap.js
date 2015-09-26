@@ -34,7 +34,7 @@ module.exports.bootstrap = function (cb) {
                         var se = {}
                         se.sysName = ids[i]
                         val.push(ele)
-                        search.push(ele)
+                        search.push(se)
                     }
                     return Sensors.findOrCreate(search, val);
                 })
