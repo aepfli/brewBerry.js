@@ -1,4 +1,4 @@
-# brewBerry
+# brewBerry.js
 
 A little brew log book for homebrewers. It logs temperatures of n ds18b20 sensors, allows to define brewphases (heating, cooling, purification, etc) and displays them in a nice Highchart.
 
