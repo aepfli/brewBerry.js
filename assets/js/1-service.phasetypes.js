@@ -12,13 +12,11 @@ brewBerry.services.phasetypes = (function () {
     };
 
     function init() {
-    }
 
-    function load() {
-        //Subscribe to events
-        io.socket.on('brewphasetypes', onIOEvent);
+        types = {};
+
+        //Subscribe to eventsx
         io.socket.get("/brewphasetypes", function (data) {
-            this.sensors = {};
             console.log(data);
             if (data !== undefined) {
                 for (var i = 0; i < data.length; i++) {
@@ -28,11 +26,13 @@ brewBerry.services.phasetypes = (function () {
         });
     }
 
+    function load() {
+    }
+
     function onAdded(name, action, recursive) {
         onPhaseAdded[name] = action;
         if (recursive) {
             for (var type in types) {
-                console.log(type, types[type])
                 onPhaseAdded[name](types[type]);
             }
         }

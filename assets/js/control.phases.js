@@ -7,9 +7,13 @@ brewBerry.controls = brewBerry.controls || {}
 brewBerry.controls.phases = (function () {
     var gauges = {};
     var publicMethods = {
-        'init': init
+        'init': init,
+        'load': load
     };
 
+    function load() {
+
+    }
     function init() {
 
         $("body").append("<section id=phaseControl>"
@@ -21,7 +25,6 @@ brewBerry.controls.phases = (function () {
     }
 
     function onAdded(data) {
-        console.log("jo")
         $("#phases").append("<li id=phase" + data.id + ">"
                 + "<a href='/brewphases/add?type=" + data.id + "'>"
                 + "<span style='background: " + data.color + "'>"
@@ -37,7 +40,6 @@ brewBerry.controls.phases = (function () {
             var url = link.attr('href');
             url = url + "&day=";
             url = url + brewBerry.brewDay.id;
-            console.log(url)
             io.socket.post(url, function (data) {
                 console.log(data)
             })

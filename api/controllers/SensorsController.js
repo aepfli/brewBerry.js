@@ -13,15 +13,7 @@ module.exports = {
                         res.json(sensor)
                     })
         } else {
-            Sensors.find()
-                    .then(function (sensors) {
-                        var ids = [];
-                        for (var sensor in sensors) {
-                            ids.push(sensors[sensor].id)
-                        }
-                        console.log(sensors, ids)
-                        return Sensors.update(ids, {running: true})
-                    })
+            TemperatureLoggingService.start()
                     .then(function(sensors){
                         return res.json(sensors)
                     })
@@ -35,18 +27,10 @@ module.exports = {
                     })
         }
         else {
-            Sensors.find()
-                    .then(function (sensors) {
-                        var ids = [];
-                        for (var sensor in sensors) {
-                            ids.push(sensors[sensor].id)
-                        }
-                        console.log(sensors, ids)
-                        return Sensors.update(ids, {running: false})
-                    })
+            TemperatureLoggingService.stop()
                     .then(function(sensors){
                         return res.json(sensors)
-                    })
+                    });
         }
     },
     all: function (req, res) {

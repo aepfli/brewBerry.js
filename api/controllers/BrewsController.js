@@ -6,36 +6,23 @@
  */
 
 module.exports = {
-    add: function (req, res) {
-        var d = new Date();
-        Brews.create({name: d.toDateString(), brewStart: d}, function(err, day){
-            BrewPhaseService.createBrewPhase(day.id, 18, function (r) {
-                return res.json(ReturnService.createResult(day,err))
-            })
-        })
-    },
-    start: function (req, res) {
-        Brews.update({id: req.param("id")}, {start: new Date()}, function(err, day){
-            return res.json(ReturnService.createResult(day,err));
-        })
-
-    },
-    end: function (req, res) {
-        Brews.update({id: req.param("id")}, {stop: new Date()}, function(err, day){
-            return res.json(ReturnService.createResult(day,err));
-        })
+    finish:function (req, res) {
+        Brews.update(req.param("id"), {brewEnd:new Date()})
+                .then(function(brew) {
+                    TemperatureLoggingService.stop();
+                    console.log("brew has ended")
+                    res.json(brew);
+                })
     },
 
-    show: function (req, res) {
-        Brews.find({id: req.param("id")}, {stop: new Date()}, function(err, day){
-            return res.json(ReturnService.createResult(day,err));
-        })
-    },
-
-    list: function (req, res) {
-        Brews.find(function(err, days){
-            return res.json(ReturnService.createResult(days,err));
-        })
+    start:function (req, res) {
+        Brews.create( {brewStart: new Date()})
+                .then(function(brew) {
+                    TemperatureLoggingService.start()
+                    console.log("brew has started")
+                    res.json(brew);
+                })
     }
+
 };
 
