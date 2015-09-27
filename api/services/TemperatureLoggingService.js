@@ -25,7 +25,7 @@ var TemperatureService = {
             Sensors.find({running: true})
                     .then(function (sensors) {
                         for (var s in sensors) {
-                            if ( false && sails.config.environment === 'development') {
+                            if (sails.config.environment === 'development') {
                                 if (oldV[sensors[s].id] === undefined) {
                                     oldV[sensors[s].id] = 50;
                                 }
@@ -47,14 +47,36 @@ var TemperatureService = {
         }, sails.config.brewberry.interval);
     },
 
+    stop: function () {
+        return Sensors.find()
+                .then(function (sensors) {
+                    var ids = [];
+                    for (var sensor in sensors) {
+                        ids.push(sensors[sensor].id)
+                    }
+                    console.log(sensors, ids)
+                    return Sensors.update(ids, {running: false})
+                })
+    },
+
+    start: function () {
+        return Sensors.find()
+                .then(function (sensors) {
+                    var ids = [];
+                    for (var sensor in sensors) {
+                        ids.push(sensors[sensor].id)
+                    }
+                    console.log(sensors, ids)
+                    return Sensors.update(ids, {running: true})
+                })
+    },
+
     createTemp: function (temp, sensor) {
-        Temps.create({temp: temp, brewTime: new Date(), sensor: sensor.id}).populateAll().exec(function (err, temp) {
-            if (err) {
-                console.log(err);
-            }
-            Temps.publishCreate(temp);
-            //console.log(temp.brewTime + " " + temp.sensor);
-        });
+        Temps.create({temp: temp, brewTime: new Date(), sensor: sensor.id})
+                .then(function (temp) {
+                    return Temps.findOneById(temp.id).populateAll()
+                })
+                .then(Temps.publishCreate);
     }
 };
 

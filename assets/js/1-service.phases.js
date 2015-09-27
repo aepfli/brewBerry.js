@@ -21,7 +21,11 @@ brewBerry.services.phase = (function () {
     function load() {
         phases = {};
         //Subscribe to events
-        io.socket.get("/brewphases", {day: brewBerry.brewDay.id},function (data) { });
+        io.socket.get("/brewphases", {day: brewBerry.brewDay.id},function (data) {
+            for (var i in data) {
+                add(data[i]);
+            }
+        });
     }
 
     function onAdded(name, action, recursive) {

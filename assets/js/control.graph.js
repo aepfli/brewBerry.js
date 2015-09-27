@@ -7,8 +7,11 @@ brewBerry.controls.graph = (function () {
     var chart = null;
     var currentPlot = null;
     var plotbands = [];
+    var series = {};
+    var inited = false;
     var publicMethods = {
-        'init': init
+        'init': init,
+        'load': load
     };
     var options = {
         chart: {
@@ -34,10 +37,19 @@ brewBerry.controls.graph = (function () {
         }
     };
 
+    function load() {
+        for(var i in series) {
+            series[i].setData([], true)
+        }
+        for(var i in plotbands) {
+            chart.xAxis[0].removePlotBand(plotbands[i].id);
+        }
+        plotbands = [];
+
+    }
     function init() {
 
         $("body").append("<section id=charts>"
-                + "<h1>chart</h1>"
                 + "<div id=chart></div>"
                 + "</section>");
         chart = new Highcharts.Chart(Highcharts.merge(options, {
@@ -45,7 +57,6 @@ brewBerry.controls.graph = (function () {
                 renderTo: "chart",
             }
         }));
-        console.log(brewBerry.services.tempservice);
         brewBerry.services.temps.onAdded("graph", onSensorAdded, true);
         brewBerry.services.temps.onTempAdded("graph", onTempAdded, true);
         brewBerry.services.phase.onAdded("graph", onPhaseAdded, true);
@@ -62,18 +73,17 @@ brewBerry.controls.graph = (function () {
             },
             lineWidth: 1
         };
-        console.log(options)
-        brewBerry.services.temps.sensors[data.id].series = chart.addSeries(options)
+        series[data.id] = chart.addSeries(options)
     }
 
     function onTempAdded(data) {
 
-        var key = data.sensor;
+        var key = data.sensor.id;
 
         var time = new Date(data.brewTime);
-        var shift = brewBerry.services.temps.sensors[key].series.data.length > 1000;
+        var shift = series[key].data.length > 1000;
 
-        brewBerry.services.temps.sensors[key].series.addPoint({x: time.getTime(), y: data.temp}, true, shift);
+       series[key].addPoint({x: time.getTime(), y: data.temp}, true, shift);
     }
 
     function onPhaseAdded(data) {
@@ -81,13 +91,17 @@ brewBerry.controls.graph = (function () {
             currentPlot.to = new Date();
         }
 
+        var toDate = data.end;
+        if(toDate === undefined){
+            toDate = Date.UTC(2018, 0, 4)
+        }
+
         var newPlot = chart.xAxis[0].addPlotBand({
             from: new Date(data.start).getTime(),
-            to: Date.UTC(2018, 0, 4),
+            to: toDate,
             color: data.type.color,
             id: data.id
         });
-        console.log(currentPlot)
         plotbands.push(newPlot);
         currentPlot = newPlot;
     }

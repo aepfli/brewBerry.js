@@ -8,10 +8,10 @@ brewBerry.controls.phases = (function () {
     var gauges = {};
     var publicMethods = {
         'init': init,
-        'reset': reset
+        'load': load
     };
 
-    function reset() {
+    function load() {
 
     }
     function init() {

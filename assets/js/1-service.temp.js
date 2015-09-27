@@ -17,6 +17,7 @@ brewBerry.services.temps = (function () {
 
     function init() {
         io.socket.on('sensors', onIOEvent);
+        io.socket.on('temps', tempsEvent);
 
         io.socket.get("/sensors", function (data) {
             console.log(data);
@@ -27,11 +28,21 @@ brewBerry.services.temps = (function () {
             }
         });
     }
+
     function reset() {
 
     }
 
     function load() {
+        for (var i in  sensors) {
+            io.socket.get("/temps", {sensor: sensors[i].id, brewTime: {">": brewBerry.brewDay.brewStart, "<": brewBerry.brewDay.brewEnd}}, function (data) {
+                if (data !== undefined) {
+                    for (var i = 0; i < data.length; i++) {
+                        addTemp(data[i]);
+                    }
+                }
+            });
+        }
     }
 
     function onAdded(name, action, recursive) {
@@ -49,7 +60,7 @@ brewBerry.services.temps = (function () {
             for (var i in  sensors) {
                 try {
                     onTempAddedMethods[name](sensors[i]);
-                }catch(e){
+                } catch (e) {
 
                 }
             }
@@ -61,13 +72,12 @@ brewBerry.services.temps = (function () {
         var key = data.id;
         sensors[key] = data;
 
-        io.socket.on('temps', tempsEvent);
-        io.socket.get("/temps", {sensor: key, brewTime: {">": new Date()}}, function (resData) {
-            console.log(resData);
-        });
-
         for (var meth in onSensorAddedMethods) {
-            onSensorAddedMethods[meth](data);
+            try {
+                onSensorAddedMethods[meth](data);
+            } catch (e) {
+
+            }
         }
     }
 
@@ -91,6 +101,7 @@ brewBerry.services.temps = (function () {
             addTemp(data);
         }
     }
+
     $(init)
     return publicMethods;
 })

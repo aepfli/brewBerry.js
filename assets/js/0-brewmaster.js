@@ -24,7 +24,7 @@ brewBerry.master = (function () {
                 + '</div>'
                 + '<div class="collapse navbar-collapse" id="navbar">'
                 + '     <ul class="nav navbar-nav">                '
-                + '         <li><a href="/brews/create" class="brewcontrol">new Brew</a></li>       '
+                + '         <li><a href="/brews/start" class="brewcontrol" id="brewstartfinish">new Brew</a></li>       '
                 + '         <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">load Brew <b class="caret"></b></a>'
                 + '             <ul class="dropdown-menu" id="brewstoload">'
                 + '                 <li><a href="#">Action</a></li>'
@@ -38,27 +38,37 @@ brewBerry.master = (function () {
 
         io.socket.on("brews", onIOEvent);
         io.socket.get("/brews", {sort: "id DESC", limit: 10}, function (data) {
-            console.log(data)
+
             for (var i in data) {
+
+                console.log(data[i])
+                console.log(data[i].brewEnd === undefined)
+                if(data[i].brewEnd === undefined) {
+                    start(data)
+                }
                 onBrewAdded(data[i]);
             }
 
             $('#brewstoload').prepend('<li role="separator" class="divider"></li>')
         });
 
-
     }
-    function resetClick(){
+
+    function resetClick() {
         $("nav .brewcontrol").unbind();
+        if(brewBerry.brewDay && brewBerry.brewDay.brewEnd === undefined){
+
+            $('#brewstartfinish').text("end Brew");
+        } else {
+            $('#brewstartfinish').text("new Brew");
+        }
         $("nav .brewcontrol").click(function (e) {
             e.preventDefault();
-            var link = $(this);
-            var url = link.attr('href');
-            io.socket.get(url, function (data) {
-                brewBerry.brewDay = data;
-                start();
-
-            })
+            if(brewBerry.brewDay && brewBerry.brewDay.brewEnd === undefined){
+                io.socket.get("/brews/finish", stop)
+            } else {
+                io.socket.get($(this).attr('href'), start)
+            }
         });
     }
 
@@ -71,7 +81,7 @@ brewBerry.master = (function () {
     }
 
     function onBrewAdded(data) {
-        $('#brewstoload').prepend('<li><a href="/brews/' + data.id + '" class="brewcontrol">' + data.name + '</a></li>')
+        $('#brewstoload').append('<li><a href="/brews/' + data.id + '" class="brewcontrol">' + data.name + '</a></li>')
         resetClick();
     }
 
@@ -80,26 +90,26 @@ brewBerry.master = (function () {
             console.log("loAD services " + services)
             brewBerry.services[services].load();
         }
-        if (!inited) {
-            for (var control in brewBerry.controls) {
-                console.log("init controls " + control)
+
+        for (var control in brewBerry.controls) {
+            console.log("init controls " + control);
+            if (!inited) {
                 brewBerry.controls[control].init();
             }
-            inited = true;
+            brewBerry.controls[control].load()
         }
+        inited = true;
+
     }
 
-    function start() {
+    function start(data) {
+        brewBerry.brewDay = data;
         initModules();
 
     }
 
-    function load() {
-        initModules();
-    }
-
-    function stop() {
-
+    function stop(data) {
+        brewBerry.brewDay = null;
     }
 
     $(init);

@@ -5,8 +5,10 @@
 var brewBerry = brewBerry || {};
 brewBerry.controls = brewBerry.controls || {}
 brewBerry.controls.gauges = (function () {
-    var gauges = {};var publicMethods = {
-        'init' :init
+    var gauges = {};
+    var publicMethods = {
+        'init' :init,
+        'load': load
     };
     var options = {
         chart: {
@@ -68,9 +70,12 @@ brewBerry.controls.gauges = (function () {
         }
     };
 
+    function load() {
+
+    }
+
     function init() {
         $("body").append("<section id=gauges>"
-                + "<h1>Sensors</h1>"
                 + "<div id=sensors></div>"
                 + "</section>");
         console.log(brewBerry.services.tempservice);
@@ -82,7 +87,7 @@ brewBerry.controls.gauges = (function () {
 
     function onSensorAdded(data) {
         $("#sensors").append("<div id='temps" + data.id + "' class='gauges'></div>");
-        brewBerry.services.temps.sensors[data.id].gauge = new Highcharts.Chart(Highcharts.merge(options, {
+        gauges[data.id] = new Highcharts.Chart(Highcharts.merge(options, {
             chart: {
                 renderTo: "temps" + data.id + "",
             },
@@ -101,8 +106,10 @@ brewBerry.controls.gauges = (function () {
     }
 
     function onTempAdded(data) {
-        var key = data.sensor;
-        brewBerry.services.temps.sensors[key].gauge.series[0].points[0].update(data.temp);
+        var key = data.sensor.id;
+        if(brewBerry.brewDay.brewEnd === undefined) {
+            gauges[key].series[0].points[0].update(data.temp);
+        }
     }
 
 

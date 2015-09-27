@@ -6,9 +6,13 @@ var brewBerry = brewBerry || {};
 brewBerry.controls = brewBerry.controls || {}
 brewBerry.controls.timer = (function () {
     var gauges = {};var publicMethods = {
-        'init' :init
+        'init' :init,
+        'load': load
     };
 
+    function load() {
+
+    }
     function init() {
 
         $("body").append("<section id=timer>"
