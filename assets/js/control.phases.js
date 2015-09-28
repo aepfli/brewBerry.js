@@ -15,13 +15,10 @@ brewBerry.controls.phases = (function () {
 
     }
     function init() {
+        $("#charts").append("<ul id='phases'></ul>");
 
-        $("body").append("<section id=phaseControl>"
-                + "<ul id=phases></ul>"
-                + "</section>");
-
+        load();
         brewBerry.services.phasetypes.onAdded("phases", onAdded, true);
-        // add me to event handling machine, still have to figure it out, where this machine will be and how this will work. maybe at the service itself?
     }
 
     function onAdded(data) {
