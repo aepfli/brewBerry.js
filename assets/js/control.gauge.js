@@ -87,7 +87,6 @@ brewBerry.controls.gauges = (function () {
 
     }
 
-
     function onSensorAdded(data) {
         $("#sensors").append("<div id='temps" + data.id + "' class='gauges'></div>");
         gauges[data.id] = new Highcharts.Chart(Highcharts.merge(options, {
