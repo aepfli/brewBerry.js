@@ -9,23 +9,32 @@ brewBerry.services.phase = (function () {
     var publicMethods = {
         'onAdded': onAdded,
         'load': load,
+        'init': init,
         'reset': reset
     };
 
     function init() {
-        io.socket.on('brewphases', onIOEvent);
+        return new Promise(function (resolve) {
+            io.socket.on('brewphases', onIOEvent);
+            resolve();
+        })
     }
+
     function reset() {
     }
 
     function load() {
         phases = {};
         //Subscribe to events
-        io.socket.get("/brewphases", {day: brewBerry.brewDay.id},function (data) {
-            for (var i in data) {
-                add(data[i]);
-            }
-        });
+        return new Promise(function (resolve) {
+            io.socket.get("/brewphases", {day: brewBerry.brewDay.id}, resolve)
+        }).then(function (data) {
+                    console.log(data)
+                    for (var i in data) {
+                        add(data[i]);
+                    }
+                });
+
     }
 
     function onAdded(name, action, recursive) {
@@ -51,7 +60,6 @@ brewBerry.services.phase = (function () {
         }
     }
 
-    $(init)
     return publicMethods;
 })
 ();

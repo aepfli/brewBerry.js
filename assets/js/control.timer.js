@@ -20,6 +20,7 @@ brewBerry.controls.timer = (function () {
                 + "<div id=timerBox></div>"
                 + "</section>");
         // add me to event handling machine, still have to figure it out, where this machine will be and how this will work. maybe at the service itself?
+        load();
     }
 
     return publicMethods;

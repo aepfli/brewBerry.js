@@ -49,18 +49,22 @@ brewBerry.controls.graph = (function () {
     }
     function init() {
 
-        $("body").append("<section id=charts>"
+        $("body").append("<section id=charts class='panel panel-default'>"
+                + "<div class='panel-body'>"
                 + "<div id=chart></div>"
+                + "</div>"
                 + "</section>");
         chart = new Highcharts.Chart(Highcharts.merge(options, {
             chart: {
                 renderTo: "chart",
             }
         }));
+        // add me to event handling machine, still have to figure it out, where this machine will be and how this will work. maybe at the service itself?
+        load();
+
         brewBerry.services.temps.onAdded("graph", onSensorAdded, true);
         brewBerry.services.temps.onTempAdded("graph", onTempAdded, true);
         brewBerry.services.phase.onAdded("graph", onPhaseAdded, true);
-        // add me to event handling machine, still have to figure it out, where this machine will be and how this will work. maybe at the service itself?
     }
 
     function onSensorAdded(data) {
@@ -77,19 +81,19 @@ brewBerry.controls.graph = (function () {
     }
 
     function onTempAdded(data) {
-
         var key = data.sensor.id;
 
-        var time = new Date(data.brewTime);
+        var time = moment(data.brewTime).toDate();
         var shift = series[key].data.length > 1000;
 
-       series[key].addPoint({x: time.getTime(), y: data.temp}, true, shift);
+       series[key].addPoint({x: time , y: data.temp}, true, shift);
     }
 
     function onPhaseAdded(data) {
         if (currentPlot) {
             currentPlot.to = new Date();
         }
+        console.log(data)
 
         var toDate = data.end;
         if(toDate === undefined){
@@ -97,7 +101,7 @@ brewBerry.controls.graph = (function () {
         }
 
         var newPlot = chart.xAxis[0].addPlotBand({
-            from: new Date(data.start).getTime(),
+            from: moment(data.start).toDate(),
             to: toDate,
             color: data.type.color,
             id: data.id

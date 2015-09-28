@@ -8,25 +8,28 @@ brewBerry.services.phasetypes = (function () {
     var onPhaseAdded = {};
     var publicMethods = {
         'onAdded': onAdded,
-        'load': load
+        'load': load,
+        'init': init
     };
 
     function init() {
 
-        types = {};
-
-        //Subscribe to eventsx
-        io.socket.get("/brewphasetypes", function (data) {
-            console.log(data);
-            if (data !== undefined) {
-                for (var i = 0; i < data.length; i++) {
-                    add(data[i]);
-                }
-            }
-        });
+        return new Promise(function (resolve) {
+            types = {};
+            io.socket.on('brewphases', onIOEvent);
+            io.socket.get("/brewphasetypes", resolve);
+        }).then(function (data) {
+                    console.log(data);
+                    if (data !== undefined) {
+                        for (var i = 0; i < data.length; i++) {
+                            add(data[i]);
+                        }
+                    }
+                });
     }
 
     function load() {
+        return new Promise(function(resolve){ resolve(); });
     }
 
     function onAdded(name, action, recursive) {
@@ -52,7 +55,6 @@ brewBerry.services.phasetypes = (function () {
         }
     }
 
-    $(init)
     return publicMethods;
 })
 ();

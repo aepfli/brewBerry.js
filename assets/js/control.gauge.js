@@ -75,13 +75,16 @@ brewBerry.controls.gauges = (function () {
     }
 
     function init() {
-        $("body").append("<section id=gauges>"
-                + "<div id=sensors></div>"
+        $("body").append("<section id=gauges class='panel panel-default'>"
+                + "<div id=sensors  class='panel-body'></div>"
                 + "</section>");
         console.log(brewBerry.services.tempservice);
+
+        load();
+
         brewBerry.services.temps.onAdded("gauge", onSensorAdded, true);
-        brewBerry.services.temps.onTempAdded("gauge", onTempAdded, true);
-        // add me to event handling machine, still have to figure it out, where this machine will be and how this will work. maybe at the service itself?
+        brewBerry.services.temps.onTempAdded("gauge", onTempAdded, false);
+
     }
 
 

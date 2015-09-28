@@ -5,6 +5,7 @@ var brewBerry = brewBerry || {};
 brewBerry.services = brewBerry.services || {}
 brewBerry.services.temps = (function () {
     var sensors = {};
+    var temps = {};
     var onSensorAddedMethods = {};
     var onTempAddedMethods = {};
     var publicMethods = {
@@ -12,21 +13,28 @@ brewBerry.services.temps = (function () {
         "onTempAdded": listenOnTempAdded,
         'sensors': sensors,
         'load': load,
+        'init': init,
         'reset': reset
     };
 
     function init() {
-        io.socket.on('sensors', onIOEvent);
-        io.socket.on('temps', tempsEvent);
-
-        io.socket.get("/sensors", function (data) {
-            console.log(data);
-            if (data !== undefined) {
-                for (var i = 0; i < data.length; i++) {
-                    add(data[i]);
+        return new Promise(
+                function (resolve) {
+                    io.socket.on('sensors', onIOEvent);
+                    io.socket.on('temps', tempsEvent);
+                    io.socket.get("/sensors", resolve)
                 }
-            }
-        });
+        ).then(
+                function (data) {
+                    console.log(data);
+                    if (data !== undefined) {
+                        for (var i = 0; i < data.length; i++) {
+                            add(data[i]);
+                        }
+                    }
+                }
+        )
+
     }
 
     function reset() {
@@ -35,7 +43,20 @@ brewBerry.services.temps = (function () {
 
     function load() {
         for (var i in  sensors) {
-            io.socket.get("/temps", {sensor: sensors[i].id, brewTime: {">": brewBerry.brewDay.brewStart, "<": brewBerry.brewDay.brewEnd}}, function (data) {
+            var query = {
+                where: {
+                    sensor: sensors[i].id,
+                    brewTime: {">": brewBerry.brewDay.brewStart}
+                },
+                limit: 2000
+            };
+            if (brewBerry.brewDay.brewEnd !== undefined) {
+                query.where.brewTime["<"] = brewBerry.brewDay.brewEnd;
+            }
+            io.socket.get("/temps", query, function (data) {
+                console.log("foooooo")
+                console.log(data);
+                console.log(query);
                 if (data !== undefined) {
                     for (var i = 0; i < data.length; i++) {
                         addTemp(data[i]);
@@ -57,11 +78,12 @@ brewBerry.services.temps = (function () {
     function listenOnTempAdded(name, action, recursive) {
         onTempAddedMethods[name] = action;
         if (recursive) {
-            for (var i in  sensors) {
+            for (var i in  temps) {
                 try {
-                    onTempAddedMethods[name](sensors[i]);
+                    console.log(i)
+                    onTempAddedMethods[name](temps[i]);
                 } catch (e) {
-
+                    console.log(e)
                 }
             }
         }
@@ -76,7 +98,7 @@ brewBerry.services.temps = (function () {
             try {
                 onSensorAddedMethods[meth](data);
             } catch (e) {
-
+                console.log(e)
             }
         }
     }
@@ -90,6 +112,7 @@ brewBerry.services.temps = (function () {
     }
 
     function addTemp(data) {
+        temps[data.id] = data;
         for (var meth in onTempAddedMethods) {
             onTempAddedMethods[meth](data);
         }
@@ -102,7 +125,6 @@ brewBerry.services.temps = (function () {
         }
     }
 
-    $(init)
     return publicMethods;
 })
 ();
