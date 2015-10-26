@@ -3,6 +3,8 @@
  */
 
 var sense = require('ds18b20');
+
+var Promise = require('bluebird');
 var oldV = {};
 
 var TemperatureService = {
