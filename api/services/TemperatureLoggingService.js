@@ -42,7 +42,7 @@ var TemperatureService = {
                             var se = {};
                             se.sysName = ids[i];
                             val.push(ele);
-                            search.push(se)
+                            search.push(se);
                         }
                         return Sensors.findOrCreate(search, val);
                     }).then(function (sensors) {
@@ -50,14 +50,20 @@ var TemperatureService = {
                 // this is something odd, there must be an easier way, somehot Sensors update, did not work like expected ;(
                 var search = [];
                 for (var i in sensors) {
-                    search.push(sensors[i].id)
+                    search.push(sensors[i].id);
                 }
                 return Sensors.update(search, {connected: true})
             }).then(function (sensors) {
-                console.info("get all running", sensors);
-                return Sensors.find({running: true, connected: true})
-                        .each(function (sensor) {
-                            readFile('/sys/bus/w1/devices/' + sensor.sysName + '/w1_slave', 'utf8')
+                        console.info("get all running", sensors);
+                        return Sensors.find({running: true, connected: true});
+                    })
+                    .then(function (sensors) {
+                        console.log("get temp", sensors);
+                        var promises = [];
+                        for (var s in sensors) {
+                            console.log("logging temp for", sensors[s]);
+
+                            promises.push(readFile('/sys/bus/w1/devices/' + sensors[s].sysName + '/w1_slave', 'utf8').bind(sensors[i])
                                     .then(function (data) {
                                         var arr = data.split(' ');
                                         var output;
@@ -68,10 +74,13 @@ var TemperatureService = {
                                         } else if (arr[1].charAt(0) === '0') {
                                             output = parseInt("0x0000" + arr[1].toString() + arr[0].toString(), 16) * 0.0625;
                                         }
-                                        TemperatureService.createTemp(output, sensor);
-                                    });
-                        })
-
+                                        return TemperatureService.createTemp(output, this);
+                                    })
+                            );
+                        }
+                        return (Promise.all(promises));
+                    }).catch(function (e) {
+                console.warn(e);
             })
         }, sails.config.brewberry.interval);
     },
