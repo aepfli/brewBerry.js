@@ -45,19 +45,20 @@ var TemperatureService = {
                         }
                         return Sensors.findOrCreate(search, val);
                     }).then(function (sensors) {
-                        console.info("updating sensors to set connected", sensors);
-                        // this is something odd, there must be an easier way, somehot Sensors update, did not work like expected ;(
-                        var search = [];
-                        for (var i in sensors) {
-                            search.push(sensors[i].id)
-                        }
-                        return Sensors.update(search, {connected: true})
-                    }).then(function (sensors) {
+                console.info("updating sensors to set connected", sensors);
+                // this is something odd, there must be an easier way, somehot Sensors update, did not work like expected ;(
+                var search = [];
+                for (var i in sensors) {
+                    search.push(sensors[i].id)
+                }
+                return Sensors.update(search, {connected: true})
+            }).then(function (sensors) {
                         console.info("get all running", sensors);
                         return Sensors.find({running: true, connected: true})
                     })
                     .then(function (sensors) {
                         console.log("get temp", sensors);
+                        var promises = [];
                         for (var s in sensors) {
 
                             console.log("logging temp for", s);
@@ -74,11 +75,14 @@ var TemperatureService = {
                                 oldV[sensors[s].id] = value;
                                 TemperatureService.createTemp(value, sensors[s])
                             } else {
-                                sense.temperature(sensors[s].sysName, function (err, value) {
-                                    TemperatureService.createTemp(value, sensors[s])
-                                })
+                                var temperatures = Promise.promisify(sense.sensors);
+                                promises.push(temperatures(sensors[s].sysName)
+                                        .then(function (value) {
+                                            TemperatureService.createTemp(value, sensors[s])
+                                        }))
                             }
                         }
+                        return (Promise.all(promises));
                     }).catch(function (e) {
                 console.warn(e);
             })
@@ -114,7 +118,10 @@ var TemperatureService = {
                 .then(function (temp) {
                     return Temps.findOneById(temp.id).populateAll()
                 })
-                .then(Temps.publishCreate);
+                .then(function (temp) {
+                    console.info(temp);
+                    Temps.publishCreate(temp);
+                });
     }
 };
 
