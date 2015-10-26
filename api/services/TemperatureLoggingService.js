@@ -54,17 +54,10 @@ var TemperatureService = {
                 }
                 return Sensors.update(search, {connected: true})
             }).then(function (sensors) {
-                        console.info("get all running", sensors);
-                        return Sensors.find({running: true, connected: true})
-                    })
-                    .then(function (sensors) {
-                        console.log("get temp", sensors);
-                        var promises = [];
-                        for (var s in sensors) {
-
-                            console.log("logging temp for", sensors[s]);
-
-                            promises.push(readFile('/sys/bus/w1/devices/' + sensors[s].sysName + '/w1_slave', 'utf8')
+                console.info("get all running", sensors);
+                return Sensors.find({running: true, connected: true})
+                        .map(function (sensor) {
+                            return readFile('/sys/bus/w1/devices/' + sensor.sysName + '/w1_slave', 'utf8')
                                     .then(function (data) {
                                         var arr = data.split(' ');
                                         var output;
@@ -77,12 +70,11 @@ var TemperatureService = {
                                         } else {
                                             throw new Error('Can not read temperature for sensor ' + sensor);
                                         }
-                                        return TemperatureService.createTemp(output, sensors[s]);
-                                    })
-                            );
-                        }
-                        return (Promise.all(promises));
-                    }).catch(function (e) {
+                                        return TemperatureService.createTemp(output, sensor);
+                                    });
+                        })
+
+            }).catch(function (e) {
                 console.warn(e);
             })
         }, sails.config.brewberry.interval);
