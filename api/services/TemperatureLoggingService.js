@@ -56,7 +56,7 @@ var TemperatureService = {
             }).then(function (sensors) {
                 console.info("get all running", sensors);
                 return Sensors.find({running: true, connected: true})
-                        .map(function (sensor) {
+                        .each(function (sensor) {
                             return readFile('/sys/bus/w1/devices/' + sensor.sysName + '/w1_slave', 'utf8')
                                     .then(function (data) {
                                         var arr = data.split(' ');
