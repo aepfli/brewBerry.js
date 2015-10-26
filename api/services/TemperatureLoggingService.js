@@ -57,7 +57,7 @@ var TemperatureService = {
                 console.info("get all running", sensors);
                 return Sensors.find({running: true, connected: true})
                         .each(function (sensor) {
-                            return readFile('/sys/bus/w1/devices/' + sensor.sysName + '/w1_slave', 'utf8')
+                            readFile('/sys/bus/w1/devices/' + sensor.sysName + '/w1_slave', 'utf8')
                                     .then(function (data) {
                                         var arr = data.split(' ');
                                         var output;
@@ -67,15 +67,11 @@ var TemperatureService = {
 
                                         } else if (arr[1].charAt(0) === '0') {
                                             output = parseInt("0x0000" + arr[1].toString() + arr[0].toString(), 16) * 0.0625;
-                                        } else {
-                                            throw new Error('Can not read temperature for sensor ' + sensor);
                                         }
-                                        return TemperatureService.createTemp(output, sensor);
+                                        TemperatureService.createTemp(output, sensor);
                                     });
                         })
 
-            }).catch(function (e) {
-                console.warn(e);
             })
         }, sails.config.brewberry.interval);
     },
