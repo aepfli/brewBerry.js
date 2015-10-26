@@ -45,14 +45,14 @@ var TemperatureService = {
                         }
                         return Sensors.findOrCreate(search, val);
                     }).then(function (sensors) {
-                console.info("updating sensors to set connected", sensors);
-                // this is something odd, there must be an easier way, somehot Sensors update, did not work like expected ;(
-                var search = [];
-                for (var i in sensors) {
-                    search.push(sensors[i].id)
-                }
-                return Sensors.update(search, {connected: true})
-            }).then(function (sensors) {
+                        console.info("updating sensors to set connected", sensors);
+                        // this is something odd, there must be an easier way, somehot Sensors update, did not work like expected ;(
+                        var search = [];
+                        for (var i in sensors) {
+                            search.push(sensors[i].id)
+                        }
+                        return Sensors.update(search, {connected: true})
+                    }).then(function (sensors) {
                         console.info("get all running", sensors);
                         return Sensors.find({running: true, connected: true})
                     })
@@ -61,24 +61,12 @@ var TemperatureService = {
                         var promises = [];
                         for (var s in sensors) {
 
-                            console.log("logging temp for", s);
-                            if (sails.config.environment === 'development' && false) {
-                                if (oldV[sensors[s].id] === undefined) {
-                                    oldV[sensors[s].id] = 50;
-                                }
-                                var f = 1;
-                                var value = Math.random() * 5;
-                                if (Math.random() > 0.5) {
-                                    f = -1;
-                                }
-                                value = oldV[sensors[s].id] + (value * f);
-                                oldV[sensors[s].id] = value;
-                                TemperatureService.createTemp(value, sensors[s])
-                            } else {
-                                promises.push(sense.temperature(sensors[s].sysName, function (err, value) {
-                                   return TemperatureService.createTemp(value, sensors[s])
-                                }));
-                            }
+                            console.log("logging temp for", sensors[s]);
+
+                            promises.push(sense.temperature(sensors[s].sysName, function (err, value) {
+                                return TemperatureService.createTemp(value, sensors[s])
+                            }));
+
                         }
                         return (Promise.all(promises));
                     }).catch(function (e) {
@@ -112,6 +100,7 @@ var TemperatureService = {
     },
 
     createTemp: function (temp, sensor) {
+        console.info("logging temp for sensor", temp, sensor);
         return Temps.create({temp: temp, brewTime: new Date(), sensor: sensor.id})
                 .then(function (temp) {
                     return Temps.findOneById(temp.id).populateAll()
