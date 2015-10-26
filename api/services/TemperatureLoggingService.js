@@ -25,11 +25,13 @@ var TemperatureService = {
     intervall: function () {
         setInterval(function () {
             Sensors.update({}, {connected: false})
-                    .then(function () {
+                    .then(function (sensors) {
+                        console.info("Set all to connected false", sensors);
                         var sensors = Promise.promisify(sense.sensors);
                         return sensors();
                     })
                     .then(function (ids) {
+                        console.info("creating new Sensors if not existing", ids);
                         var val = [];
                         var search = [];
                         for (var i in ids) {
@@ -43,10 +45,11 @@ var TemperatureService = {
                         }
                         return Sensors.findOrCreate(search, val);
                     }).then(function (sensors) {
-                        console.log("updating sensors to set connected", sensors)
+                        console.info("updating sensors to set connected", sensors);
+
                         return Sensors.update(sensors,{connected: true})
                     }).then(function (sensors) {
-                        console.log("get all running", sensors);
+                        console.info("get all running", sensors);
                         return Sensors.find({running: true, connected: true})
                     })
                     .then(function (sensors) {
