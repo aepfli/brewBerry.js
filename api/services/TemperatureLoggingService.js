@@ -37,9 +37,9 @@ var TemperatureService = {
                             ele.name = ids[i];
                             ele.sysName = ids[i];
                             ele.connected = true;
-                            var se = {}
+                            var se = {};
                             se.sysName = ids[i];
-                            val.push(ele)
+                            val.push(ele);
                             search.push(se)
                         }
                         return Sensors.findOrCreate(search, val);
@@ -47,20 +47,20 @@ var TemperatureService = {
                         var ids = [];
                         var val = [];
                         for (var sensor in sensors) {
-                            ids.push({id:sensors[sensor].id})
+                            ids.push({id:sensors[sensor].id});
                             val.push({connected: true})
                         }
-                        console.log(sensors, ids)
+                        console.log("updating sensors to set connected", sensors, ids)
                         return Sensors.update(ids,val)
                     }).then(function (sensors) {
-                        console.log("get all running")
-                        Sensors.find({running: true, connected: true})
+                        console.log("get all running");
+                        return Sensors.find({running: true, connected: true})
                     })
                     .then(function (sensors) {
-                        console.log("get temp", sensors)
+                        console.log("get temp", sensors);
                         for (var s in sensors) {
 
-                            console.log("logging temp for",s)
+                            console.log("logging temp for",s);
                             if (sails.config.environment === 'development' && false) {
                                 if (oldV[sensors[s].id] === undefined) {
                                     oldV[sensors[s].id] = 50;
