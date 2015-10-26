@@ -47,17 +47,11 @@ var TemperatureService = {
                     }).then(function (sensors) {
                         console.info("updating sensors to set connected", sensors);
                         // this is something odd, there must be an easier way, somehot Sensors update, did not work like expected ;(
-                        var val = [];
                         var search = [];
                         for (var i in sensors) {
-                            var ele = {};
-                            ele.connected = true;
-                            var se = {};
-                            se.id = sensors[i].id;
-                            val.push(ele);
-                            search.push(se)
+                            search.push(sensors[i].id)
                         }
-                        return Sensors.update(search, val)
+                        return Sensors.update(search, {connected: true})
                     }).then(function (sensors) {
                         console.info("get all running", sensors);
                         return Sensors.find({running: true, connected: true})
