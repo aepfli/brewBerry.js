@@ -24,7 +24,8 @@ var TemperatureService = {
         setInterval(function () {
             Sensors.update({}, {connected: false})
                     .then(function () {
-                        return TemperatureService.getAllSensors();
+                        var sensors = Promise.promisify(sense.sensors);
+                        return sensors();
                     })
                     .then(function (ids) {
                         var val = [];
