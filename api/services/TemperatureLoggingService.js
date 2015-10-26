@@ -45,15 +45,19 @@ var TemperatureService = {
                         return Sensors.findOrCreate(search, val);
                     }).then(function (sensors) {
                         var ids = [];
+                        var val = [];
                         for (var sensor in sensors) {
                             ids.push(sensors[sensor].id)
+                            val.push({connected: true})
                         }
                         console.log(sensors, ids)
-                        return Sensors.update(ids, {connected: true})
+                        return Sensors.update(ids,val)
                     }).then(function (sensors) {
-                        Sensors.find({running: true})
+                        console.log("get all running")
+                        Sensors.find({running: true, connected: true})
                     })
                     .then(function (sensors) {
+                        console.log("get temp", sensors)
                         for (var s in sensors) {
 
                             console.log("logging temp for",s)
