@@ -75,11 +75,9 @@ var TemperatureService = {
                                 oldV[sensors[s].id] = value;
                                 TemperatureService.createTemp(value, sensors[s])
                             } else {
-                                var temperatures = Promise.promisify(sense.sensors);
-                                promises.push(temperatures(sensors[s].sysName)
-                                        .then(function (value) {
-                                            TemperatureService.createTemp(value, sensors[s])
-                                        }))
+                                promises.push(sense.temperature(sensors[s].sysName, function (err, value) {
+                                   return TemperatureService.createTemp(value, sensors[s])
+                                }));
                             }
                         }
                         return (Promise.all(promises));
@@ -114,7 +112,7 @@ var TemperatureService = {
     },
 
     createTemp: function (temp, sensor) {
-        Temps.create({temp: temp, brewTime: new Date(), sensor: sensor.id})
+        return Temps.create({temp: temp, brewTime: new Date(), sensor: sensor.id})
                 .then(function (temp) {
                     return Temps.findOneById(temp.id).populateAll()
                 })
