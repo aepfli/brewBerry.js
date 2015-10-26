@@ -63,7 +63,7 @@ var TemperatureService = {
                         for (var s in sensors) {
                             console.log("logging temp for", sensors[s]);
 
-                            promises.push(readFile('/sys/bus/w1/devices/' + sensors[s].sysName + '/w1_slave', 'utf8').bind(sensors[i])
+                            promises.push(readFile('/sys/bus/w1/devices/' + sensors[s].sysName + '/w1_slave', 'utf8').bind(sensors[s])
                                     .then(function (data) {
                                         var arr = data.split(' ');
                                         var output;
@@ -79,9 +79,7 @@ var TemperatureService = {
                             );
                         }
                         return (Promise.all(promises));
-                    }).catch(function (e) {
-                console.warn(e);
-            })
+                    })
         }, sails.config.brewberry.interval);
     },
 
