@@ -36,7 +36,6 @@ var TemperatureService = {
                             var ele = {};
                             ele.name = ids[i];
                             ele.sysName = ids[i];
-                            ele.connected = true;
                             var se = {};
                             se.sysName = ids[i];
                             val.push(ele);
