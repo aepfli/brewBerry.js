@@ -46,8 +46,18 @@ var TemperatureService = {
                         return Sensors.findOrCreate(search, val);
                     }).then(function (sensors) {
                         console.info("updating sensors to set connected", sensors);
-
-                        return Sensors.update(sensors, {connected: true})
+                        // this is something odd, there must be an easier way, somehot Sensors update, did not work like expected ;(
+                        var val = [];
+                        var search = [];
+                        for (var i in sensors) {
+                            var ele = {};
+                            ele.connected = true;
+                            var se = {};
+                            se.id = sensors[i].id;
+                            val.push(ele);
+                            search.push(se)
+                        }
+                        return Sensors.update(search, val)
                     }).then(function (sensors) {
                         console.info("get all running", sensors);
                         return Sensors.find({running: true, connected: true})
@@ -76,8 +86,8 @@ var TemperatureService = {
                             }
                         }
                     }).catch(function (e) {
-                        console.warn(e);
-                    })
+                console.warn(e);
+            })
         }, sails.config.brewberry.interval);
     },
 
