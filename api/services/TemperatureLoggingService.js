@@ -47,7 +47,7 @@ var TemperatureService = {
                         var ids = [];
                         var val = [];
                         for (var sensor in sensors) {
-                            ids.push(sensors[sensor].id)
+                            ids.push({id:sensors[sensor].id})
                             val.push({connected: true})
                         }
                         console.log(sensors, ids)
