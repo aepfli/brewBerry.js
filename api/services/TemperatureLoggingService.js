@@ -44,10 +44,19 @@ var TemperatureService = {
                         }
                         return Sensors.findOrCreate(search, val);
                     }).then(function (sensors) {
+                        var ids = [];
+                        for (var sensor in sensors) {
+                            ids.push(sensors[sensor].id)
+                        }
+                        console.log(sensors, ids)
+                        return Sensors.update(ids, {connected: true})
+                    }).then(function (sensors) {
                         Sensors.find({running: true})
                     })
                     .then(function (sensors) {
                         for (var s in sensors) {
+
+                            console.log("logging temp for",s)
                             if (sails.config.environment === 'development' && false) {
                                 if (oldV[sensors[s].id] === undefined) {
                                     oldV[sensors[s].id] = 50;
