@@ -8,7 +8,7 @@ var oldV = {};
 var TemperatureService = {
 
     getAllSensors: function (callback, options) {
-        if (sails.config.environment === 'development') {
+        if (sails.config.environment === 'development' && false) {
             return Sensors.find();
         } else {
             return sense.sensors()
@@ -22,10 +22,30 @@ var TemperatureService = {
 
     intervall: function () {
         setInterval(function () {
-            Sensors.find({running: true})
+            Sensors.update({}, {connected: false})
+                    .then(function () {
+                        return getAllSensors();
+                    })
+                    .then(function (ids) {
+                        var val = [];
+                        var search = [];
+                        for (var i in ids) {
+                            var ele = {};
+                            ele.name = ids[i];
+                            ele.sysName = ids[i];
+                            ele.connected = true;
+                            var se = {}
+                            se.sysName = ids[i];
+                            val.push(ele)
+                            search.push(se)
+                        }
+                        return Sensors.findOrCreate(search, val);
+                    }).then(function (sensors) {
+                        Sensors.find({running: true})
+                    })
                     .then(function (sensors) {
                         for (var s in sensors) {
-                            if (sails.config.environment === 'development') {
+                            if (sails.config.environment === 'development' && false) {
                                 if (oldV[sensors[s].id] === undefined) {
                                     oldV[sensors[s].id] = 50;
                                 }
