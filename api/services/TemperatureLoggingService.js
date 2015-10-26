@@ -47,7 +47,7 @@ var TemperatureService = {
                     }).then(function (sensors) {
                         console.info("updating sensors to set connected", sensors);
 
-                        return Sensors.update(sensors,{connected: true})
+                        return Sensors.update(sensors, {connected: true})
                     }).then(function (sensors) {
                         console.info("get all running", sensors);
                         return Sensors.find({running: true, connected: true})
@@ -56,7 +56,7 @@ var TemperatureService = {
                         console.log("get temp", sensors);
                         for (var s in sensors) {
 
-                            console.log("logging temp for",s);
+                            console.log("logging temp for", s);
                             if (sails.config.environment === 'development' && false) {
                                 if (oldV[sensors[s].id] === undefined) {
                                     oldV[sensors[s].id] = 50;
@@ -75,7 +75,9 @@ var TemperatureService = {
                                 })
                             }
                         }
-                    });
+                    }).catch(function (e) {
+                        console.warn(e);
+                    })
         }, sails.config.brewberry.interval);
     },
 
