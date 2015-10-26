@@ -64,7 +64,7 @@ var TemperatureService = {
 
                             console.log("logging temp for", sensors[s]);
 
-                            var temp = readFile('/sys/bus/w1/devices/' + sensors[s].sysName + '/w1_slave', 'utf8')
+                            promises.push(readFile('/sys/bus/w1/devices/' + sensors[s].sysName + '/w1_slave', 'utf8')
                                     .then(function (data) {
                                         var arr = data.split(' ');
                                         var output;
@@ -77,9 +77,9 @@ var TemperatureService = {
                                         } else {
                                             throw new Error('Can not read temperature for sensor ' + sensor);
                                         }
-                                        return output;
-                                    });
-                            promises.push(TemperatureService.createTemp(temp, sensors[s]));
+                                        return TemperatureService.createTemp(output, sensors[s]);
+                                    })
+                            );
                         }
                         return (Promise.all(promises));
                     }).catch(function (e) {
