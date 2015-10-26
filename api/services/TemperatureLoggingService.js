@@ -5,6 +5,7 @@
 var sense = require('ds18b20');
 
 var Promise = require('bluebird');
+var readFile = Promise.promisify(require("fs").readFile);
 var oldV = {};
 
 var TemperatureService = {
@@ -45,14 +46,14 @@ var TemperatureService = {
                         }
                         return Sensors.findOrCreate(search, val);
                     }).then(function (sensors) {
-                        console.info("updating sensors to set connected", sensors);
-                        // this is something odd, there must be an easier way, somehot Sensors update, did not work like expected ;(
-                        var search = [];
-                        for (var i in sensors) {
-                            search.push(sensors[i].id)
-                        }
-                        return Sensors.update(search, {connected: true})
-                    }).then(function (sensors) {
+                console.info("updating sensors to set connected", sensors);
+                // this is something odd, there must be an easier way, somehot Sensors update, did not work like expected ;(
+                var search = [];
+                for (var i in sensors) {
+                    search.push(sensors[i].id)
+                }
+                return Sensors.update(search, {connected: true})
+            }).then(function (sensors) {
                         console.info("get all running", sensors);
                         return Sensors.find({running: true, connected: true})
                     })
@@ -63,10 +64,22 @@ var TemperatureService = {
 
                             console.log("logging temp for", sensors[s]);
 
-                            promises.push(sense.temperature(sensors[s].sysName, function (err, value) {
-                                return TemperatureService.createTemp(value, sensors[s])
-                            }));
+                            var temp = readFile('/sys/bus/w1/devices/' + sensors[s].sysName + '/w1_slave', 'utf8')
+                                    .then(function (data) {
+                                        var arr = data.split(' ');
+                                        var output;
+                                        if (arr[1].charAt(0) === 'f') {
+                                            var x = parseInt("0xffff" + arr[1].toString() + arr[0].toString(), 16);
+                                            output = -((~x + 1) * 0.0625);
 
+                                        } else if (arr[1].charAt(0) === '0') {
+                                            output = parseInt("0x0000" + arr[1].toString() + arr[0].toString(), 16) * 0.0625;
+                                        } else {
+                                            throw new Error('Can not read temperature for sensor ' + sensor);
+                                        }
+                                        return output;
+                                    });
+                            promises.push(TemperatureService.createTemp(temp, sensors[s]));
                         }
                         return (Promise.all(promises));
                     }).catch(function (e) {
